@@ -1,0 +1,26 @@
+name: 内容修正
+about: 报告条目中的事实、来源或隐私问题
+title: "[内容] "
+labels: [content]
+body:
+  - type: input
+    id: entry
+    attributes:
+      label: 条目链接或 slug
+      placeholder: /entry/example 或 example
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: 需要修正的内容
+      description: 请说明可核验的事实、来源或隐私风险。
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: 参考来源
+      description: 提供公开来源或说明你为何能核验该信息。
+    validations:
+      required: false
