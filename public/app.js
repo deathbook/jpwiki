@@ -36,4 +36,24 @@ async function init() {
   const response = await fetch("/api/entries"); const data = await response.json(); const names = [...new Set(data.entries.map((e) => e.category))]; categories.innerHTML = ["全部", ...names].map((name) => `<button class="filter${name === "全部" ? " active" : ""}" data-category="${name === "全部" ? "" : escapeHtml(name)}">${escapeHtml(name)}</button>`).join(""); categories.addEventListener("click", (event) => { const button = event.target.closest("button"); if (!button) return; activeCategory = button.dataset.category; categories.querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button)); load(); }); render(data.entries);
 }
 form.addEventListener("submit", (event) => { event.preventDefault(); currentQuery = new FormData(form).get("q").trim(); document.querySelector("#entries").scrollIntoView({ behavior: "smooth" }); load(); });
+const suggestionForm = document.querySelector("#suggestion-form");
+const suggestionStatus = document.querySelector("#suggestion-status");
+suggestionForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = suggestionForm.querySelector("button[type=submit]");
+  const payload = Object.fromEntries(new FormData(suggestionForm));
+  suggestionStatus.textContent = "正在提交…";
+  button.disabled = true;
+  try {
+    const response = await fetch("/api/suggestions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "提交失败");
+    suggestionStatus.textContent = "已收到，感谢你的贡献！审核完成后会处理这条建议。";
+    suggestionStatus.className = "form-status success";
+    suggestionForm.reset();
+  } catch (error) {
+    suggestionStatus.textContent = error.message || "提交失败，请稍后再试。";
+    suggestionStatus.className = "form-status error";
+  } finally { button.disabled = false; }
+});
 init().catch(() => { list.innerHTML = '<div class="empty">服务暂时不可用，请稍后重试。</div>'; });
