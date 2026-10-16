@@ -27,7 +27,9 @@ async function route(req, res) {
   const match = url.pathname.match(/^\/api\/entries\/([^/]+)$/);
   if (match) {
     const data = await loadData();
-    let slug;`n    try { slug = decodeURIComponent(match[1]); } catch { return json(res, 400, { error: "无效的条目标识" }); }`n    const entry = data.entries.find((item) => item.slug === slug);
+    let slug;
+    try { slug = decodeURIComponent(match[1]); } catch { return json(res, 400, { error: "无效的条目标识" }); }
+    const entry = data.entries.find((item) => item.slug === slug);
     return entry ? json(res, 200, entry) : json(res, 404, { error: "条目不存在" });
   }
   // Client-side detail view: serve the shell for /entry/:slug and let app.js load the record.
@@ -41,7 +43,4 @@ async function route(req, res) {
 }
 const server = http.createServer((req, res) => route(req, res).catch((error) => { console.error(error); json(res, 500, { error: "服务器暂时不可用" }); }));
 server.listen(port, () => console.log(`JPWiki listening on http://localhost:${port}`));
-
-
-
 
