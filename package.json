@@ -1,0 +1,15 @@
+{
+  "name": "jpwiki",
+  "version": "0.1.0",
+  "private": true,
+  "description": "建平中学 JPWiki：由社区共同维护的校园知识库",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "check": "node --check server.js && node --check scripts/check-data.js && node scripts/check-data.js",
+    "test": "node --test",
+    "seed": "node scripts/seed.js"
+  },
+  "engines": { "node": ">=20" }
+}
