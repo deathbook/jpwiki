@@ -85,10 +85,17 @@ async function route(req, res) {
     const data = await loadData();
     const q = clean(url.searchParams.get("q")).toLocaleLowerCase("zh-CN");
     const category = clean(url.searchParams.get("category"));
+    const requestedPage = Number.parseInt(url.searchParams.get("page") || "1", 10);
+    const requestedLimit = Number.parseInt(url.searchParams.get("limit") || "20", 10);
+    const page = Number.isFinite(requestedPage) && requestedPage > 0 ? Math.min(requestedPage, 10000) : 1;
+    const limit = Number.isFinite(requestedLimit) && requestedLimit > 0 ? Math.min(requestedLimit, 50) : 20;
     let entries = data.entries;
     if (category) entries = entries.filter((e) => e.category === category);
     if (q) entries = entries.filter((e) => [e.title, e.summary, e.content, e.category, ...(e.tags || [])].join(" ").toLocaleLowerCase("zh-CN").includes(q));
-    return json(res, 200, { entries, total: entries.length });
+    const total = entries.length;
+    const categories = [...new Set(data.entries.map((entry) => entry.category))].sort();
+    const start = (page - 1) * limit;
+    return json(res, 200, { entries: entries.slice(start, start + limit), total, page, limit, pages: Math.max(1, Math.ceil(total / limit)), categories });
   }
   const match = url.pathname.match(/^\/api\/entries\/([^/]+)$/);
   if (match) {
