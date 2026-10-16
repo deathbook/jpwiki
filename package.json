@@ -8,8 +8,10 @@
     "dev": "node server.js",
     "start": "node server.js",
     "check": "node --check server.js && node --check scripts/check-data.js && node scripts/check-data.js",
-    "test": "node --test",
+    "test": "node --test test-data.mjs test-api.mjs",
     "seed": "node scripts/seed.js"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }
